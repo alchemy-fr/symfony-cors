@@ -27,7 +27,7 @@ class CorsServiceProvider implements ServiceProviderInterface
         $app['alchemy_cors.debug'] = false;
 
         $app['alchemy_cors.defaults'] = null;
-        $app['alchemy_cors.map'] = null;
+        $app['alchemy_cors.paths'] = null;
 
         $app['alchemy_cors.config'] = $app->share(function (Application $app) {
             $config = null;
@@ -43,11 +43,13 @@ class CorsServiceProvider implements ServiceProviderInterface
             $processor = new Processor();
             $configuration = new CorsConfiguration();
 
+            $configArray = array(
+                'defaults' => $app['alchemy_cors.defaults'],
+                'paths'    => $app['alchemy_cors.paths'],
+            );
+
             $processed = $processor->processConfiguration($configuration, array(
-                'alchemy_cors' => array(
-                    'defaults' => $app['alchemy_cors.defaults'],
-                    'paths' => $app['alchemy_cors.map'],
-                ),
+                $configArray,
             ));
 
             if ($config) {
