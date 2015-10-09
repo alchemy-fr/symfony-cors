@@ -63,22 +63,24 @@ class CorsServiceProvider implements ServiceProviderInterface
             return new DefaultProvider($config['paths'], $config['defaults']);
         };
         $app['alchemy_cors.options_providers'] = array(
-            array('priority' => -1, 'service' => 'alchemy_cors.default_options_provider')
+            array('priority' => -1, 'service' => 'alchemy_cors.default_options_provider'),
         );
 
         $that = $this;
         $app['alchemy_cors.options_resolver'] = $app->share(function (Application $app) use ($that) {
             $providers = array();
 
-            foreach ($that->sortProviders($app['alchemy_cors.options_providers']) as $serviceName) {
-                $providers[] = $app[$serviceName];
+            foreach ($that->sortProviders($app['alchemy_cors.options_providers']) as $serviceNames) {
+                foreach ($serviceNames as $serviceName) {
+                    $providers[] = $app[$serviceName];
+                }
             }
 
             return new DefaultResolver($providers);
         });
 
         $app['alchemy_cors.listener'] = $app->share(function (Application $app) {
-            return new CorsListener($app['dispatcher'], $app['alchemy_cors.option_resolver']);
+            return new CorsListener($app['dispatcher'], $app['alchemy_cors.options_resolver']);
         });
     }
 
