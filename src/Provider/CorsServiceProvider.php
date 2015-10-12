@@ -18,6 +18,7 @@ use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class CorsServiceProvider implements ServiceProviderInterface
 {
@@ -26,8 +27,8 @@ class CorsServiceProvider implements ServiceProviderInterface
         $app['alchemy_cors.cache_path'] = null;
         $app['alchemy_cors.debug'] = false;
 
-        $app['alchemy_cors.defaults'] = null;
-        $app['alchemy_cors.paths'] = null;
+        $app['alchemy_cors.defaults'] = array();
+        $app['alchemy_cors.paths'] = array();
 
         $app['alchemy_cors.config'] = $app->share(function (Application $app) {
             $config = null;
@@ -88,7 +89,11 @@ class CorsServiceProvider implements ServiceProviderInterface
 
     public function boot(Application $app)
     {
-        $app->before(array($app['alchemy_cors.listener'], 'onKernelRequest'), 10000);
+        $app['dispatcher']->addListener(
+            KernelEvents::REQUEST,
+            array($app['alchemy_cors.listener'], 'onKernelRequest'),
+            10000
+        );
     }
 
     public function sortProviders(array $providers)
