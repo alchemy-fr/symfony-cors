@@ -106,7 +106,7 @@ class CorsListener
             $response->headers->set('Access-Control-Allow-Methods', implode(', ', $options['allow_methods']));
         }
         if ($options['allow_headers']) {
-            $headers = $options['allow_headers'] === true
+            $headers = $options['allow_headers'] === array('*')
                 ? $request->headers->get('Access-Control-Request-Headers')
                 : implode(', ', $options['allow_headers']);
             $response->headers->set('Access-Control-Allow-Headers', $headers);
@@ -135,7 +135,7 @@ class CorsListener
         }
         // check request headers
         $headers = $request->headers->get('Access-Control-Request-Headers');
-        if ($options['allow_headers'] !== true && $headers) {
+        if (array('*') !== $options['allow_headers']) {
             $headers = trim(strtolower($headers));
             foreach (preg_split('{, *}', $headers) as $header) {
                 if (in_array($header, self::$simpleHeaders, true)) {

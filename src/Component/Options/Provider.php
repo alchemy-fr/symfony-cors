@@ -27,6 +27,7 @@ interface Provider
      * - array allow_methods
      * - array expose_headers
      * - int max_age
+     * - array hosts
      *
      * @param Request $request
      *
