@@ -54,7 +54,7 @@ class CorsServiceProvider implements ServiceProviderInterface
             ));
 
             if ($config) {
-                $configAsArray = var_export($configArray, true);
+                $configAsArray = var_export($processed, true);
                 $configString = <<<CONFIG_EOF
 <?php
 return {$configAsArray};
