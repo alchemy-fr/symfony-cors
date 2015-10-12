@@ -37,7 +37,7 @@ class CorsServiceProvider implements ServiceProviderInterface
                 $config = new ConfigCache($cachePath, $app['alchemy_cors.debug']);
 
                 if ($config->isFresh()) {
-                    return unserialize(file_get_contents($cachePath));
+                    return require $cachePath;
                 }
             }
 
@@ -54,7 +54,12 @@ class CorsServiceProvider implements ServiceProviderInterface
             ));
 
             if ($config) {
-                $config->write(serialize($processed));
+                $configAsArray = var_export($configArray, true);
+                $configString = <<<CONFIG_EOF
+<?php
+return {$configAsArray};
+CONFIG_EOF;
+                $config->write($configString);
             }
 
             return $processed;
