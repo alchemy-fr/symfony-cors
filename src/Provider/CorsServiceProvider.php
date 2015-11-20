@@ -131,7 +131,7 @@ CONFIG_EOF;
             $providersByPriority[$priority][] = $service;
         }
 
-        ksort($providersByPriority);
+        krsort($providersByPriority);
 
         return $providersByPriority;
     }
