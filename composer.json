@@ -26,5 +26,10 @@
             "name": "Benoît Burnichon",
             "email": "bburnichon@alchemy.fr"
         }
-    ]
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
 }
