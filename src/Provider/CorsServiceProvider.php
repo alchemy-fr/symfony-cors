@@ -101,8 +101,12 @@ CONFIG_EOF;
         );
     }
 
-    public function sortProviders(array $providers)
+    public function sortProviders($providers)
     {
+        if (!is_array($providers) && !$providers instanceof \Traversable) {
+            throw new \InvalidArgumentException('Providers should be an array or Traversable instance');
+        }
+
         $providersByPriority = array();
 
         foreach ($providers as $service) {
