@@ -71,7 +71,7 @@ CONFIG_EOF;
             return new DefaultProvider($config['paths'], $config['defaults']);
         };
         $app['alchemy_cors.options_providers'] = new \ArrayObject(array(
-            array('priority' => -1, 'service' => 'alchemy_cors.options_provider.config'),
+            'alchemy_cors.options_provider.config',
         ));
 
         $that = $this;
