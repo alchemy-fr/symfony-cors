@@ -2,11 +2,12 @@
     "name": "alchemy/symfony-cors",
     "description": "A library that adds CORS services to Silex/Symfony Applications",
     "require": {
-        "symfony/http-kernel": "^2.3.0|^3.0.0"
+        "symfony/http-kernel": "^2.3.0|^3.0.0",
+        "symfony/config": "^2.0"
     },
     "require-dev": {
-        "silex/silex": "^1.0",
-        "phpunit/phpunit": "^4.0"
+        "silex/silex": "^2.0",
+        "phpunit/phpunit": "^6.0"
     },
     "autoload": {
         "psr-4": {
