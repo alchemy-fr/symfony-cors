@@ -14,15 +14,18 @@ use Alchemy\Cors\Configuration\CorsConfiguration;
 use Alchemy\Cors\CorsListener;
 use Alchemy\Cors\Options\DefaultProvider;
 use Alchemy\Cors\Options\DefaultResolver;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
+use Silex\Api\BootableProviderInterface;
 use Silex\Application;
-use Silex\ServiceProviderInterface;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class CorsServiceProvider implements ServiceProviderInterface
+
+class CorsServiceProvider implements ServiceProviderInterface, BootableProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $app)
     {
         $app['alchemy_cors.cache_path'] = null;
         $app['alchemy_cors.debug'] = false;
@@ -30,7 +33,7 @@ class CorsServiceProvider implements ServiceProviderInterface
         $app['alchemy_cors.defaults'] = array();
         $app['alchemy_cors.paths'] = array();
 
-        $app['alchemy_cors.config'] = $app->share(function (Application $app) {
+        $app['alchemy_cors.config'] = function (Container $app) {
             $config = null;
 
             if ('' != $cachePath = $app['alchemy_cors.cache_path']) {
@@ -63,19 +66,20 @@ CONFIG_EOF;
             }
 
             return $processed;
-        });
+        };
 
-        $app['alchemy_cors.options_provider.config'] = function (Application $app) {
+        $app['alchemy_cors.options_provider.config'] = $app->factory(function (Container $app) {
             $config = $app['alchemy_cors.config'];
 
             return new DefaultProvider($config['paths'], $config['defaults']);
-        };
+        });
+
         $app['alchemy_cors.options_providers'] = new \ArrayObject(array(
             'alchemy_cors.options_provider.config',
         ));
 
         $that = $this;
-        $app['alchemy_cors.options_resolver'] = $app->share(function (Application $app) use ($that) {
+        $app['alchemy_cors.options_resolver'] = function (Container $app) use ($that) {
             $providers = array();
 
             foreach ($that->sortProviders($app['alchemy_cors.options_providers']) as $serviceNames) {
@@ -85,11 +89,11 @@ CONFIG_EOF;
             }
 
             return new DefaultResolver($providers);
-        });
+        };
 
-        $app['alchemy_cors.listener'] = $app->share(function (Application $app) {
+        $app['alchemy_cors.listener'] = function (Container $app) {
             return new CorsListener($app['dispatcher'], $app['alchemy_cors.options_resolver']);
-        });
+        };
     }
 
     public function boot(Application $app)
